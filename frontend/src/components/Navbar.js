@@ -1,3 +1,5 @@
+// ...existing code...
+import { NavLink } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import {
     AppBar, Toolbar, Typography, Button, Box,
@@ -14,12 +16,8 @@ function Navbar() {
     const [unreadCount, setUnreadCount] = useState(0);
     const [anchorEl, setAnchorEl] = useState(null);
     const [notifAnchor, setNotifAnchor] = useState(null);
-    const [userId, setUserId] = useState(
-        localStorage.getItem('userId')
-    );
-    const [userName, setUserName] = useState(
-        localStorage.getItem('userName') || 'User'
-    );
+    const [userId, setUserId] = useState(localStorage.getItem('userId'));
+    const [userName, setUserName] = useState(localStorage.getItem('userName') || 'User');
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -36,20 +34,17 @@ function Navbar() {
         const id = urlUserId || localStorage.getItem('userId');
         if (id) {
             fetchNotifications(id);
-            const interval = setInterval(
-                () => fetchNotifications(id), 30000
-            );
+            const interval = setInterval(() => fetchNotifications(id), 30000);
             return () => clearInterval(interval);
         }
+        return undefined;
     }, []);
 
     const fetchNotifications = async (id) => {
         try {
-            const res = await notificationAPI
-                .getUserNotifications(id);
+            const res = await notificationAPI.getUserNotifications(id);
             setNotifications(res.data);
-            const unread = res.data.filter(
-                n => !n.isRead).length;
+            const unread = res.data.filter(n => !n.isRead).length;
             setUnreadCount(unread);
         } catch (error) {
             console.error('Notification error:', error);
@@ -61,9 +56,9 @@ function Navbar() {
         if (userId && unreadCount > 0) {
             notificationAPI.markAllAsRead(userId).then(() => {
                 setUnreadCount(0);
-                setNotifications(prev =>
-                    prev.map(n => ({ ...n, isRead: true }))
-                );
+                setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+            }).catch(err => {
+                console.error('markAllAsRead error:', err);
             });
         }
     };
@@ -87,9 +82,7 @@ function Navbar() {
         e.stopPropagation();
         try {
             await notificationAPI.deleteNotification(notif.id);
-            setNotifications(prev =>
-                prev.filter(x => x.id !== notif.id)
-            );
+            setNotifications(prev => prev.filter(x => x.id !== notif.id));
             if (!notif.isRead) {
                 setUnreadCount(prev => Math.max(0, prev - 1));
             }
@@ -116,77 +109,54 @@ function Navbar() {
                     Smart Campus
                 </Typography>
 
-                <Box sx={{ display: 'flex',
-                           alignItems: 'center', gap: 1 }}>
-                    <Button color="inherit"
-                            component={Link} to="/">
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Button color="inherit" component={Link} to="/">
                         Dashboard
                     </Button>
-                    <Button color="inherit"
-                            component={Link} to="/resources">
+                    <Button color="inherit" component={Link} to="/resources">
                         Resources
                     </Button>
-                    <Button color="inherit"
-                            component={Link} to="/bookings">
+                    <Button color="inherit" component={Link} to="/bookings">
                         Bookings
                     </Button>
-                    <Button color="inherit"
-                            component={Link} to="/tickets">
+                    <Button color="inherit" component={Link} to="/tickets">
                         Tickets
                     </Button>
+                    <Button color="inherit" component={Link} to="/alerts">
+                        Alerts
+                    </Button>
 
-                    {/* Notification Bell */}
-                    <IconButton color="inherit"
-                                onClick={handleNotifOpen}>
-                        <Badge badgeContent={unreadCount}
-                               color="error">
+                    <IconButton color="inherit" onClick={handleNotifOpen}>
+                        <Badge badgeContent={unreadCount} color="error">
                             <NotificationsIcon />
                         </Badge>
                     </IconButton>
 
-                    {/* Notification Dropdown */}
                     <Menu
                         anchorEl={notifAnchor}
                         open={Boolean(notifAnchor)}
                         onClose={handleNotifClose}
-                        PaperProps={{
-                            sx: { width: 350, maxHeight: 450,
-                                  overflow: 'hidden' }
-                        }}>
-
-                        {/* Header */}
+                        PaperProps={{ sx: { width: 350, maxHeight: 450, overflow: 'hidden' } }}
+                    >
                         <Box sx={{
-                            px: 2, py: 1.5,
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            borderBottom: '2px solid #1976d2',
-                            backgroundColor: '#f5f5f5'
+                            px: 2, py: 1.5, display: 'flex',
+                            justifyContent: 'space-between', alignItems: 'center',
+                            borderBottom: '2px solid #1976d2', backgroundColor: '#f5f5f5'
                         }}>
-                            <Typography variant="subtitle1"
-                                        fontWeight="bold"
-                                        color="#1976d2">
+                            <Typography variant="subtitle1" fontWeight="bold" color="#1976d2">
                                 🔔 Notifications
                             </Typography>
                             {notifications.length > 0 && (
-                                <Button size="small"
-                                        color="error"
-                                        variant="outlined"
-                                        sx={{ py: 0, fontSize: '11px' }}
-                                        onClick={handleClearAll}>
+                                <Button size="small" color="error" variant="outlined" sx={{ py: 0, fontSize: '11px' }} onClick={handleClearAll}>
                                     Clear All
                                 </Button>
                             )}
                         </Box>
 
-                        {/* Notification List */}
-                        <Box sx={{ overflowY: 'auto',
-                                   maxHeight: 350 }}>
+                        <Box sx={{ overflowY: 'auto', maxHeight: 350 }}>
                             {notifications.length === 0 ? (
-                                <Box sx={{ p: 4,
-                                           textAlign: 'center' }}>
-                                    <Typography variant="body2"
-                                                color="textSecondary">
+                                <Box sx={{ p: 4, textAlign: 'center' }}>
+                                    <Typography variant="body2" color="textSecondary">
                                         🎉 No notifications!
                                     </Typography>
                                 </Box>
@@ -194,53 +164,24 @@ function Navbar() {
                                 notifications.slice(0, 10).map(n => (
                                     <Box key={n.id} sx={{
                                         px: 2, py: 1.5,
-                                        backgroundColor: n.isRead
-                                            ? 'white' : '#E3F2FD',
-                                        borderBottom:
-                                            '1px solid #f0f0f0',
-                                        display: 'flex',
-                                        justifyContent:
-                                            'space-between',
-                                        alignItems: 'flex-start',
-                                        '&:hover': {
-                                            backgroundColor: '#f9f9f9'
-                                        }
+                                        backgroundColor: n.isRead ? 'white' : '#E3F2FD',
+                                        borderBottom: '1px solid #f0f0f0',
+                                        display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
+                                        '&:hover': { backgroundColor: '#f9f9f9' }
                                     }}>
                                         <Box sx={{ flex: 1, mr: 1 }}>
-                                            <Typography
-                                                variant="body2"
-                                                fontWeight="bold"
-                                                color={n.isRead
-                                                    ? 'textPrimary'
-                                                    : '#1976d2'}>
+                                            <Typography variant="body2" fontWeight="bold" color={n.isRead ? 'textPrimary' : '#1976d2'}>
                                                 {n.title}
                                             </Typography>
-                                            <Typography
-                                                variant="caption"
-                                                color="textSecondary"
-                                                sx={{
-                                                    display: 'block',
-                                                    mt: 0.3
-                                                }}>
+                                            <Typography variant="caption" color="textSecondary" sx={{ display: 'block', mt: 0.3 }}>
                                                 {n.message}
                                             </Typography>
                                         </Box>
-                                        {/* Delete Button */}
                                         <IconButton
                                             size="small"
-                                            onClick={(e) =>
-                                                handleDeleteNotification(
-                                                    e, n)}
-                                            sx={{
-                                                width: 24,
-                                                height: 24,
-                                                color: '#ccc',
-                                                '&:hover': {
-                                                    color: 'red',
-                                                    backgroundColor:
-                                                        '#ffebee'
-                                                }
-                                            }}>
+                                            onClick={(e) => handleDeleteNotification(e, n)}
+                                            sx={{ width: 24, height: 24, color: '#ccc', '&:hover': { color: 'red', backgroundColor: '#ffebee' } }}
+                                        >
                                             ✕
                                         </IconButton>
                                     </Box>
@@ -249,52 +190,39 @@ function Navbar() {
                         </Box>
                     </Menu>
 
-                    {/* User Avatar */}
-                    <IconButton onClick={handleAvatarClick}
-                                sx={{ ml: 1 }}>
+                    <IconButton onClick={handleAvatarClick} sx={{ ml: 1 }}>
                         <Avatar sx={{
-                            width: 34, height: 34,
-                            bgcolor: 'white',
-                            color: '#1976d2',
-                            fontSize: '15px',
-                            fontWeight: 'bold',
-                            border: '2px solid rgba(255,255,255,0.5)'
+                            width: 34, height: 34, bgcolor: 'white', color: '#1976d2',
+                            fontSize: '15px', fontWeight: 'bold', border: '2px solid rgba(255,255,255,0.5)'
                         }}>
                             {userName.charAt(0).toUpperCase()}
                         </Avatar>
                     </IconButton>
 
-                    {/* User Menu */}
                     <Menu
                         anchorEl={anchorEl}
                         open={Boolean(anchorEl)}
                         onClose={handleMenuClose}
-                        PaperProps={{ sx: { minWidth: 180 } }}>
+                        PaperProps={{ sx: { minWidth: 180 } }}
+                    >
                         <Box sx={{ px: 2, py: 1.5 }}>
-                            <Typography variant="body2"
-                                        fontWeight="bold">
+                            <Typography variant="body2" fontWeight="bold">
                                 {userName}
                             </Typography>
-                            <Typography variant="caption"
-                                        color="textSecondary">
+                            <Typography variant="caption" color="textSecondary">
                                 User ID: {userId}
                             </Typography>
                         </Box>
                         <Divider />
-                        <Box sx={{
-                            px: 2, py: 1,
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 1,
-                            cursor: 'pointer',
-                            color: 'red',
-                            '&:hover': { backgroundColor: '#ffebee' }
-                        }}
-                        onClick={handleLogout}>
+                        <Box
+                            sx={{
+                                px: 2, py: 1, display: 'flex', alignItems: 'center', gap: 1,
+                                cursor: 'pointer', color: 'red', '&:hover': { backgroundColor: '#ffebee' }
+                            }}
+                            onClick={handleLogout}
+                        >
                             <LogoutIcon fontSize="small" />
-                            <Typography variant="body2">
-                                Logout
-                            </Typography>
+                            <Typography variant="body2">Logout</Typography>
                         </Box>
                     </Menu>
                 </Box>

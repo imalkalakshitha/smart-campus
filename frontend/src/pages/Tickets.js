@@ -1,3 +1,4 @@
+// ...existing code...
 import React, { useState, useEffect } from 'react';
 import {
     Container, Typography, Table, TableBody, TableCell,
@@ -8,6 +9,7 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import BugReportIcon from '@mui/icons-material/BugReport';
 import { ticketAPI, resourceAPI } from '../services/api';
 
@@ -23,6 +25,14 @@ function Tickets() {
         resourceId: '', category: '',
         description: '', priority: 'MEDIUM',
         contactDetails: ''
+    });
+
+    // New edit states
+    const [editOpen, setEditOpen] = useState(false);
+    const [editingId, setEditingId] = useState(null);
+    const [editForm, setEditForm] = useState({
+        category: '', description: '',
+        priority: 'MEDIUM', contactDetails: ''
     });
 
     const userId = localStorage.getItem('userId') || 1;
@@ -109,6 +119,46 @@ function Tickets() {
         } catch (err) {
             setError('Failed to delete ticket.');
             setDeleteOpen(false);
+        }
+    };
+
+    // Edit handlers
+    const handleEditClick = (ticket) => {
+        setEditingId(ticket.id);
+        setEditForm({
+            category: ticket.category || '',
+            description: ticket.description || '',
+            priority: ticket.priority || 'MEDIUM',
+            contactDetails: ticket.contactDetails || ''
+        });
+        setEditOpen(true);
+        setError('');
+    };
+
+    const handleEditSubmit = async () => {
+        setError('');
+        if (!editForm.category || !editForm.description ||
+            !editForm.contactDetails) {
+            setError('Please fill all required fields!');
+            return;
+        }
+        try {
+            await ticketAPI.update(editingId, {
+                category: editForm.category,
+                description: editForm.description,
+                priority: editForm.priority,
+                contactDetails: editForm.contactDetails
+            });
+            setSuccess('Ticket updated successfully!');
+            setEditOpen(false);
+            setEditingId(null);
+            setEditForm({
+                category: '', description: '',
+                priority: 'MEDIUM', contactDetails: ''
+            });
+            fetchTickets();
+        } catch (err) {
+            setError('Failed to update ticket. Try again.');
         }
     };
 
@@ -331,6 +381,17 @@ function Tickets() {
                                                         Close
                                                     </Button>
                                                 )}
+                                                {/* EDIT Button */}
+                                                <Tooltip title="Edit Ticket">
+                                                    <IconButton
+                                                        size="small"
+                                                        color="primary"
+                                                        onClick={() =>
+                                                            handleEditClick(t)}>
+                                                        <EditIcon
+                                                            fontSize="small" />
+                                                    </IconButton>
+                                                </Tooltip>
                                                 {/* DELETE Button */}
                                                 <Tooltip title="Delete Ticket">
                                                     <IconButton
@@ -439,6 +500,84 @@ function Tickets() {
                                 onClick={handleSubmit}
                                 sx={{ px: 3 }}>
                             Submit Ticket
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
+                {/* Edit Ticket Dialog */}
+                <Dialog open={editOpen}
+                        onClose={() => setEditOpen(false)}
+                        maxWidth="sm" fullWidth>
+                    <DialogTitle sx={{
+                        background:
+                            'linear-gradient(135deg, #1976d2, #42a5f5)',
+                        color: 'white', fontWeight: 'bold'
+                    }}>
+                        Edit Ticket
+                    </DialogTitle>
+                    <DialogContent sx={{ pt: 2 }}>
+                        {error && (
+                            <Alert severity="error"
+                                   sx={{ mb: 2, mt: 1 }}>
+                                {error}
+                            </Alert>
+                        )}
+                        <TextField fullWidth select
+                            label="Category *"
+                            margin="normal"
+                            value={editForm.category}
+                            onChange={e => setEditForm({
+                                ...editForm,
+                                category: e.target.value
+                            })}>
+                            {categories.map(c => (
+                                <MenuItem key={c} value={c}>
+                                    {c}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                        <TextField fullWidth select
+                            label="Priority *"
+                            margin="normal"
+                            value={editForm.priority}
+                            onChange={e => setEditForm({
+                                ...editForm,
+                                priority: e.target.value
+                            })}>
+                            {['LOW','MEDIUM','HIGH','CRITICAL'].map(p => (
+                                <MenuItem key={p} value={p}>{p}</MenuItem>
+                            ))}
+                        </TextField>
+                        <TextField fullWidth
+                            label="Description *"
+                            margin="normal" multiline rows={3}
+                            value={editForm.description}
+                            placeholder="Describe the issue..."
+                            onChange={e => setEditForm({
+                                ...editForm,
+                                description: e.target.value
+                            })} />
+                        <TextField fullWidth
+                            label="Contact Details *"
+                            margin="normal"
+                            value={editForm.contactDetails}
+                            placeholder="Phone or email"
+                            onChange={e => setEditForm({
+                                ...editForm,
+                                contactDetails: e.target.value
+                            })} />
+                    </DialogContent>
+                    <DialogActions sx={{ p: 2 }}>
+                        <Button onClick={() => {
+                            setEditOpen(false);
+                            setEditingId(null);
+                        }} color="inherit">
+                            Cancel
+                        </Button>
+                        <Button variant="contained" color="primary"
+                                onClick={handleEditSubmit}
+                                sx={{ px: 3 }}>
+                            Save Changes
                         </Button>
                     </DialogActions>
                 </Dialog>
