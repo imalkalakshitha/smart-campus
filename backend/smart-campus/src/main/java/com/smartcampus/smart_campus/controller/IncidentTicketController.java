@@ -111,4 +111,13 @@ public class IncidentTicketController {
         return ResponseEntity.ok(
                 ticketService.saveImageAttachments(id, files));
     }
+
+    // PUT - Ticket update කරන්න ✅ NEW
+    @PutMapping("/{id}")
+    public ResponseEntity<IncidentTicket> updateTicket(
+            @PathVariable Long id,
+            @RequestBody IncidentTicket updatedTicket) {
+        return ResponseEntity.ok(
+                ticketService.updateTicket(id, updatedTicket));
+    }
 }

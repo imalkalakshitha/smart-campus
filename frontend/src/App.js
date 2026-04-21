@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard';
 import Resources from './pages/Resources';
 import Bookings from './pages/Bookings';
 import Tickets from './pages/Tickets';
+import EmergencyAlerts from './pages/EmergencyAlerts';
 import Login from './pages/Login';
 import Navbar from './components/Navbar';
 
@@ -36,6 +37,8 @@ function App() {
                                        element={<Bookings />} />
                                 <Route path="/tickets" 
                                        element={<Tickets />} />
+                                <Route path="/alerts"
+                                       element={<EmergencyAlerts />} />
                             </Routes>
                         </>
                     } />

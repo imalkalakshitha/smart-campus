@@ -124,6 +124,17 @@ public class IncidentTicketService {
         ticketRepository.deleteById(id);
     }
 
+    // Ticket update කරන්න ✅ NEW
+    public IncidentTicket updateTicket(Long id,
+                                       IncidentTicket updatedTicket) {
+        IncidentTicket ticket = getTicketById(id);
+        ticket.setCategory(updatedTicket.getCategory());
+        ticket.setDescription(updatedTicket.getDescription());
+        ticket.setPriority(updatedTicket.getPriority());
+        ticket.setContactDetails(updatedTicket.getContactDetails());
+        return ticketRepository.save(ticket);
+    }
+
     // Images upload කරන්න
     public List<String> saveImageAttachments(Long ticketId,
                                              List<MultipartFile> files) throws IOException {

@@ -15,14 +15,30 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
 
-    public Notification createNotification(User user, String title,
-                                           String message, String type) {
-        Notification notification = new Notification();
-        notification.setUser(user);
-        notification.setTitle(title);
-        notification.setMessage(message);
-        notification.setType(type);
-        return notificationRepository.save(notification);
+    public void createNotification(User user, String title,
+                                   String message, String type) {
+        if (user != null) {
+            // Send to specific user
+            Notification notification = new Notification();
+            notification.setUser(user);
+            notification.setTitle(title);
+            notification.setMessage(message);
+            notification.setType(type);
+            notificationRepository.save(notification);
+        } else {
+            // Broadcast to all users
+            List<User> allUsers = userRepository.findAll();
+            List<Notification> notifications = allUsers.stream()
+                    .map(u -> {
+                        Notification n = new Notification();
+                        n.setUser(u);
+                        n.setTitle(title);
+                        n.setMessage(message);
+                        n.setType(type);
+                        return n;
+                    }).toList();
+            notificationRepository.saveAll(notifications);
+        }
     }
 
     public List<Notification> getUserNotifications(Long userId) {
@@ -74,4 +90,6 @@ public class NotificationService {
                 .findByUserOrderByCreatedAtDesc(user);
         notificationRepository.deleteAll(all);
     }
+
+
 }

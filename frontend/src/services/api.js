@@ -31,12 +31,14 @@ export const bookingAPI = {
     cancel: (id) => api.put(`/bookings/${id}/cancel`),
     delete: (id) => api.delete(`/bookings/${id}`),
 };
+
 export const ticketAPI = {
     getAll: () => api.get('/tickets'),
     getById: (id) => api.get(`/tickets/${id}`),
     getUserTickets: (userId) =>
         api.get(`/tickets/my/${userId}`),
     create: (data) => api.post('/tickets', data),
+    update: (id, data) => api.put(`/tickets/${id}`, data),
     updateStatus: (id, status, note) =>
         api.put(`/tickets/${id}/status`, { status, note }),
     assign: (ticketId, techId) =>
@@ -65,6 +67,7 @@ export const notificationAPI = {
     deleteAll: (userId) =>
         api.delete(`/notifications/user/${userId}/all`),
 };
+
 // Users
 export const userAPI = {
     getAll: () => api.get('/users'),
