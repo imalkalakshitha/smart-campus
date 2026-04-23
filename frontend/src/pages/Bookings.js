@@ -4,11 +4,14 @@ import {
     TableContainer, TableHead, TableRow, Paper, Chip,
     Button, Box, Dialog, DialogTitle, DialogContent,
     DialogActions, TextField, MenuItem, Alert, Card,
-    CardContent, Grid, IconButton, Tooltip
+    CardContent, Grid, IconButton, Tooltip, Fade, Avatar
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import BookOnlineIcon from '@mui/icons-material/BookOnline';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
+import PendingIcon from '@mui/icons-material/Pending';
 import { bookingAPI, resourceAPI } from '../services/api';
 
 function Bookings() {
@@ -136,49 +139,87 @@ function Bookings() {
         REJECTED: 'error', CANCELLED: 'default'
     }[status] || 'default');
 
+    const statusIcon = (status) => ({
+        PENDING: <PendingIcon />,
+        APPROVED: <CheckCircleIcon />,
+        REJECTED: <CancelIcon />,
+        CANCELLED: <CancelIcon />
+    }[status] || <PendingIcon />);
+
     const pending = bookings.filter(
         b => b.status === 'PENDING').length;
     const approved = bookings.filter(
         b => b.status === 'APPROVED').length;
 
     return (
-        <Box sx={{ backgroundColor: '#F5F7FA',
-                   minHeight: '100vh', pb: 4 }}>
-            <Container sx={{ pt: 4 }}>
+        <Box sx={{ 
+            background: 'linear-gradient(135deg, #F5F7FA 0%, #C3CFE2 100%)',
+            minHeight: '100vh', 
+            py: 4
+        }}>
+            <Container maxWidth="xl">
 
-                <Box display="flex" justifyContent="space-between"
-                     alignItems="center" mb={3}>
-                    <Box display="flex" alignItems="center" gap={2}>
-                        <BookOnlineIcon sx={{
-                            fontSize: 35, color: '#1976d2'
-                        }} />
-                        <Typography variant="h4" fontWeight="bold">
-                            Booking Management
-                        </Typography>
+                <Fade in={true} timeout={1000}>
+                    <Box display="flex" justifyContent="space-between"
+                         alignItems="center" mb={4}>
+                        <Box display="flex" alignItems="center" gap={3}>
+                            <Avatar sx={{ 
+                                bgcolor: 'linear-gradient(135deg, #1976d2, #42a5f5)',
+                                width: 64, height: 64,
+                                boxShadow: '0 4px 20px rgba(25, 118, 210, 0.3)'
+                            }}>
+                                <BookOnlineIcon sx={{ fontSize: 32, color: 'white' }} />
+                            </Avatar>
+                            <Box>
+                                <Typography variant="h3" fontWeight="bold" color="primary">
+                                    📅 Booking Management
+                                </Typography>
+                                <Typography variant="h6" color="textSecondary">
+                                    Manage resource bookings and requests
+                                </Typography>
+                            </Box>
+                        </Box>
+                        <Button variant="contained"
+                            startIcon={<AddIcon />}
+                            onClick={() => {
+                                setOpen(true);
+                                setError('');
+                                setSuccess('');
+                            }}
+                            sx={{ 
+                                borderRadius: 3, 
+                                px: 4, 
+                                py: 1.5,
+                                fontSize: '1rem',
+                                background: 'linear-gradient(135deg, #1976d2, #42a5f5)',
+                                boxShadow: '0 4px 15px rgba(25, 118, 210, 0.3)',
+                                '&:hover': {
+                                    background: 'linear-gradient(135deg, #1565c0, #1976d2)',
+                                    transform: 'translateY(-2px)',
+                                    boxShadow: '0 6px 20px rgba(25, 118, 210, 0.4)'
+                                },
+                                transition: 'all 0.3s ease'
+                            }}>
+                            New Booking
+                        </Button>
                     </Box>
-                    <Button variant="contained"
-                        startIcon={<AddIcon />}
-                        onClick={() => {
-                            setOpen(true);
-                            setError('');
-                            setSuccess('');
-                        }}
-                        sx={{ borderRadius: 2, px: 3 }}>
-                        New Booking
-                    </Button>
-                </Box>
+                </Fade>
 
                 {error && (
-                    <Alert severity="error" sx={{ mb: 2 }}
-                           onClose={() => setError('')}>
-                        {error}
-                    </Alert>
+                    <Fade in={true} timeout={500}>
+                        <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}
+                               onClose={() => setError('')}>
+                            {error}
+                        </Alert>
+                    </Fade>
                 )}
                 {success && (
-                    <Alert severity="success" sx={{ mb: 2 }}
-                           onClose={() => setSuccess('')}>
-                        {success}
-                    </Alert>
+                    <Fade in={true} timeout={500}>
+                        <Alert severity="success" sx={{ mb: 3, borderRadius: 2 }}
+                               onClose={() => setSuccess('')}>
+                            {success}
+                        </Alert>
+                    </Fade>
                 )}
 
                 <Grid container spacing={2} mb={3}>
