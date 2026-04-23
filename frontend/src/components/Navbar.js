@@ -47,7 +47,7 @@ function Navbar() {
             const unread = res.data.filter(n => !n.isRead).length;
             setUnreadCount(unread);
         } catch (error) {
-            console.error('Notification error:', error);
+            console.error('Notificationn error:', error);//fixed
         }
     };
 
