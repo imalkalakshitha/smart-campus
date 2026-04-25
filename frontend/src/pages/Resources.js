@@ -84,7 +84,7 @@ function Resources() {
             resetForm();
             fetchResources();
         } catch (err) {
-            setError('Failed to create resource.');
+            setError('Failed to create resource.');//error done imalka
         }
     };
 
