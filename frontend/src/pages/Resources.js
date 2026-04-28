@@ -228,7 +228,7 @@ function Resources() {
                 <Grid item xs={6}>
                     <TextField 
                         fullWidth 
-                        label="Available From
+                        label="Available From"
                         type="time" 
                         margin="normal"
                         variant="outlined"
