@@ -222,7 +222,7 @@ function Resources() {
                     }
                 }}
                 value={form.location}
-                onChange={e => setForm({...form, location: e.target.value})} 
+                onChange={e => setForm{...form, location: e.target.value})} 
             />
             <Grid container spacing={2}>
                 <Grid item xs={6}>
