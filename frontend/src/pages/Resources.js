@@ -363,11 +363,14 @@ function Resources() {
                                     sx={{ borderRadius: 2, overflow: 'hidden' }}>
                     <Table>
                         <TableHead>
-                            <TableRow sx={{ backgroundColor: '#1976d2' }}>
+                            <TableRow sx={{ 
+                                background: 'linear-gradient(135deg, #1976d2, #1565c0)',
+                                '& th': { fontWeight: 'bold' }
+                            }}>
                                 {['Name', 'Type', 'Capacity', 'Location',
                                   'Available Hours', 'Status', 'Actions'].map(h => (
                                     <TableCell key={h}
-                                        sx={{ color: 'white', fontWeight: 'bold' }}>
+                                        sx={{ color: 'white', fontWeight: 'bold', fontSize: '0.95rem' }}>
                                         {h}
                                     </TableCell>
                                 ))}
@@ -377,21 +380,31 @@ function Resources() {
                             {filtered.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={7} align="center"
-                                               sx={{ py: 4, color: 'gray' }}>
-                                        No resources found!
+                                               sx={{ py: 5, color: '#999' }}>
+                                        <MeetingRoomIcon sx={{ fontSize: 48, opacity: 0.3, mb: 1 }} />
+                                        <Typography>No resources found!</Typography>
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                filtered.map((r) => (
+                                filtered.map((r, idx) => (
                                     <TableRow key={r.id}
-                                        sx={{ '&:hover': { backgroundColor: '#F5F5F5' } }}>
+                                        sx={{ 
+                                            '&:hover': { 
+                                                backgroundColor: '#F5F5F5',
+                                                boxShadow: 'inset 4px 0 0 #1976d2'
+                                            },
+                                            transition: 'all 0.2s ease',
+                                            borderLeft: idx === 0 ? 'none' : '1px solid #e0e0e0'
+                                        }}>
                                         <TableCell>
                                             <Typography variant="body2"
-                                                        fontWeight="bold">
+                                                        fontWeight="bold"
+                                                        sx={{ color: '#1976d2' }}>
                                                 {r.name}
                                             </Typography>
                                             <Typography variant="caption"
-                                                        color="textSecondary">
+                                                        color="textSecondary"
+                                                        sx={{ fontSize: '0.8rem', display: 'block', mt: 0.3 }}>
                                                 {r.description}
                                             </Typography>
                                         </TableCell>
@@ -399,40 +412,64 @@ function Resources() {
                                             <Chip label={r.type}
                                                 variant="outlined"
                                                 size="small"
-                                                color="primary" />
+                                                color="primary"
+                                                sx={{ fontWeight: 'bold' }} />
                                         </TableCell>
-                                        <TableCell>{r.capacity}</TableCell>
+                                        <TableCell sx={{ fontWeight: 'bold' }}>
+                                            {r.capacity}
+                                        </TableCell>
                                         <TableCell>{r.location}</TableCell>
                                         <TableCell>
-                                            {r.availableFrom?.substring(0, 5)} -
-                                            {r.availableTo?.substring(0, 5)}
+                                            <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                                                {r.availableFrom?.substring(0, 5)} - {r.availableTo?.substring(0, 5)}
+                                            </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            {/* Status Toggle Button */}
                                             <Chip
                                                 label={r.status === 'ACTIVE'
-                                                    ? 'ACTIVE' : 'OUT OF SERVICE'}
+                                                    ? '✓ ACTIVE' : '⚠ OUT OF SERVICE'}
                                                 color={r.status === 'ACTIVE'
                                                     ? 'success' : 'error'}
                                                 size="small"
                                                 onClick={() => handleToggleStatus(r)}
-                                                sx={{ cursor: 'pointer' }}
+                                                sx={{ 
+                                                    cursor: 'pointer',
+                                                    fontWeight: 'bold',
+                                                    transition: 'all 0.2s ease',
+                                                    '&:hover': {
+                                                        transform: 'scale(1.05)'
+                                                    }
+                                                }}
                                             />
                                         </TableCell>
                                         <TableCell>
                                             <Box display="flex" gap={0.5}>
-                                                <Tooltip title="Edit">
+                                                <Tooltip title="Edit Resource" arrow>
                                                     <IconButton size="small"
                                                         color="primary"
-                                                        onClick={() => handleEdit(r)}>
+                                                        onClick={() => handleEdit(r)}
+                                                        sx={{
+                                                            '&:hover': {
+                                                                backgroundColor: 'rgba(25, 118, 210, 0.1)',
+                                                                transform: 'scale(1.1)'
+                                                            },
+                                                            transition: 'all 0.2s ease'
+                                                        }}>
                                                         <EditIcon fontSize="small" />
                                                     </IconButton>
                                                 </Tooltip>
-                                                <Tooltip title="Delete">
+                                                <Tooltip title="Delete Resource" arrow>
                                                     <IconButton size="small"
                                                         color="error"
                                                         onClick={() =>
-                                                            handleDeleteConfirm(r)}>
+                                                            handleDeleteConfirm(r)}
+                                                        sx={{
+                                                            '&:hover': {
+                                                                backgroundColor: 'rgba(211, 47, 47, 0.1)',
+                                                                transform: 'scale(1.1)'
+                                                            },
+                                                            transition: 'all 0.2s ease'
+                                                        }}>
                                                         <DeleteIcon fontSize="small" />
                                                     </IconButton>
                                                 </Tooltip>
@@ -444,6 +481,7 @@ function Resources() {
                         </TableBody>
                     </Table>
                 </TableContainer>
+                </Fade>
 
                 {/* Add Resource Dialog */}
                 <Dialog open={open} onClose={() => setOpen(false)}
