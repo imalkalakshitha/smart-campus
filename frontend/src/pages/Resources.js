@@ -269,7 +269,7 @@ function Resources() {
             <TextField 
                 fullWidth 
                 select 
-                label="Status" 
+                label="Sta" 
                 margin="normal"
                 variant="outlined"
                 sx={{ 
