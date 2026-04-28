@@ -327,9 +327,6 @@ function Resources() {
                                 <Typography variant="h6" color="textSecondary">
                                     Manage campus resources and facilities
                                 </Typography>
-                                <Typography variant="body2" color="error" sx={{ fontWeight: 'bold', mt: 0.5 }}>
-                                    ⚡ Hurry up
-                                </Typography>
                             </Box>
                         </Box>
                         <Button variant="contained"
