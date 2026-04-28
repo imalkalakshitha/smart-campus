@@ -4,7 +4,7 @@ import {
     TableCell, TableContainer, TableHead, TableRow,
     Paper, Chip, Dialog, DialogTitle, DialogContent,
     DialogActions, TextField, MenuItem, Box, Card,
-    CardContent, Grid, IconButton, Tooltip, Alert
+    CardContent, Grid, IconButton, Tooltip, Alert, Fade, Avatar
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -215,55 +215,105 @@ function Resources() {
     );
 
     return (
-        <Box sx={{ backgroundColor: '#F5F7FA', minHeight: '100vh', pb: 4 }}>
-            <Container sx={{ pt: 4 }}>
+        <Box sx={{ 
+            background: 'linear-gradient(135deg, #F5F7FA 0%, #C3CFE2 100%)',
+            minHeight: '100vh', 
+            pb: 4 
+        }}>
+            <Container maxWidth="xl" sx={{ pt: 4 }}>
 
-                {/* Header */}
-                <Box display="flex" justifyContent="space-between"
-                     alignItems="center" mb={3}>
-                    <Box display="flex" alignItems="center" gap={2}>
-                        <MeetingRoomIcon sx={{ fontSize: 35, color: '#1976d2' }} />
-                        <Typography variant="h4" fontWeight="bold">
-                            Resources
-                        </Typography>
+                {/* Header with Avatar */}
+                <Fade in={true} timeout={1000}>
+                    <Box display="flex" justifyContent="space-between"
+                         alignItems="center" mb={4}>
+                        <Box display="flex" alignItems="center" gap={3}>
+                            <Avatar sx={{ 
+                                bgcolor: 'linear-gradient(135deg, #1976d2, #42a5f5)',
+                                width: 64, height: 64,
+                                boxShadow: '0 4px 20px rgba(25, 118, 210, 0.3)'
+                            }}>
+                                <MeetingRoomIcon sx={{ fontSize: 32, color: 'white' }} />
+                            </Avatar>
+                            <Box>
+                                <Typography variant="h3" fontWeight="bold" color="primary">
+                                    🏢 Resources Management
+                                </Typography>
+                                <Typography variant="h6" color="textSecondary">
+                                    Manage campus resources and facilities
+                                </Typography>
+                            </Box>
+                        </Box>
+                        <Button variant="contained"
+                            startIcon={<AddIcon />}
+                            onClick={() => {
+                                setOpen(true);
+                                setError('');
+                                resetForm();
+                            }}
+                            sx={{ 
+                                borderRadius: 3, 
+                                px: 4, 
+                                py: 1.5,
+                                fontSize: '1rem',
+                                background: 'linear-gradient(135deg, #1976d2, #42a5f5)',
+                                boxShadow: '0 4px 15px rgba(25, 118, 210, 0.3)',
+                                '&:hover': {
+                                    background: 'linear-gradient(135deg, #1565c0, #1976d2)',
+                                    transform: 'translateY(-2px)',
+                                    boxShadow: '0 6px 20px rgba(25, 118, 210, 0.4)'
+                                },
+                                transition: 'all 0.3s ease'
+                            }}>
+                            Add Resource
+                        </Button>
                     </Box>
-                    <Button variant="contained"
-                        startIcon={<AddIcon />}
-                        onClick={() => {
-                            setOpen(true);
-                            setError('');
-                            resetForm();
-                        }}
-                        sx={{ borderRadius: 2, px: 3 }}>
-                        Add Resource
-                    </Button>
-                </Box>
+                </Fade>
 
+                {/* Alerts */}
                 {success && (
-                    <Alert severity="success" sx={{ mb: 2 }}
-                           onClose={() => setSuccess('')}>
-                        {success}
-                    </Alert>
+                    <Fade in={true} timeout={500}>
+                        <Alert severity="success" sx={{ mb: 3, borderRadius: 2 }}
+                               onClose={() => setSuccess('')}>
+                            {success}
+                        </Alert>
+                    </Fade>
+                )}
+                {error && (
+                    <Fade in={true} timeout={500}>
+                        <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}
+                               onClose={() => setError('')}>
+                            {error}
+                        </Alert>
+                    </Fade>
                 )}
 
-                {/* Stats */}
+                {/* Stats Cards */}
                 <Grid container spacing={2} mb={3}>
                     {[
                         { label: 'Total', value: resources.length, color: '#1976d2' },
                         { label: 'Active', value: activeCount, color: '#388e3c' },
                         { label: 'Out of Service', value: outCount, color: '#d32f2f' },
                     ].map((s, i) => (
-                        <Grid item xs={4} key={i}>
-                            <Card elevation={2}
-                                  sx={{ borderRadius: 2, textAlign: 'center' }}>
-                                <CardContent sx={{ py: 1.5 }}>
+                        <Grid item xs={12} sm={6} md={4} key={i}>
+                            <Card elevation={2} sx={{
+                                borderRadius: 2,
+                                textAlign: 'center',
+                                transition: 'all 0.3s ease',
+                                '&:hover': {
+                                    transform: 'translateY(-8px)',
+                                    boxShadow: '0 12px 24px rgba(0, 0, 0, 0.12)'
+                                }
+                            }}>
+                                <CardContent sx={{ py: 2.5 }}>
                                     <Typography variant="h4"
-                                                fontWeight="bold"
-                                                color={s.color}>
+                                        fontWeight="bold"
+                                        color={s.color}
+                                        sx={{ mb: 1 }}>
                                         {s.value}
                                     </Typography>
                                     <Typography variant="body2"
-                                                color="textSecondary">
+                                        color="textSecondary"
+                                        sx={{ fontSize: '0.95rem' }}>
                                         {s.label}
                                     </Typography>
                                 </CardContent>
@@ -273,31 +323,44 @@ function Resources() {
                 </Grid>
 
                 {/* Filters */}
-                <Box display="flex" gap={2} mb={2} alignItems="center">
-                    <FilterListIcon color="action" />
-                    <TextField select size="small" label="Filter by Type"
-                        value={filterType} sx={{ minWidth: 160 }}
-                        onChange={e => setFilterType(e.target.value)}>
-                        <MenuItem value="ALL">All Types</MenuItem>
-                        {types.map(t => (
-                            <MenuItem key={t} value={t}>{t}</MenuItem>
-                        ))}
-                    </TextField>
-                    <TextField select size="small" label="Filter by Status"
-                        value={filterStatus} sx={{ minWidth: 160 }}
-                        onChange={e => setFilterStatus(e.target.value)}>
-                        <MenuItem value="ALL">All Status</MenuItem>
-                        <MenuItem value="ACTIVE">ACTIVE</MenuItem>
-                        <MenuItem value="OUT_OF_SERVICE">OUT OF SERVICE</MenuItem>
-                    </TextField>
-                    <Typography variant="body2" color="textSecondary">
-                        Showing {filtered.length} of {resources.length} resources
-                    </Typography>
-                </Box>
+                <Fade in={true} timeout={800}>
+                    <Box display="flex" gap={2} mb={3} alignItems="center"
+                         sx={{ 
+                             flexWrap: 'wrap',
+                             backgroundColor: 'white',
+                             p: 2.5,
+                             borderRadius: 2,
+                             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                             alignContent: 'center'
+                         }}>
+                        <FilterListIcon color="primary" sx={{ fontSize: 24 }} />
+                        <TextField select size="small" label="Filter by Type"
+                            value={filterType} sx={{ minWidth: 180 }}
+                            onChange={e => setFilterType(e.target.value)}>
+                            <MenuItem value="ALL">All Types</MenuItem>
+                            {types.map(t => (
+                                <MenuItem key={t} value={t}>{t}</MenuItem>
+                            ))}
+                        </TextField>
+                        <TextField select size="small" label="Filter by Status"
+                            value={filterStatus} sx={{ minWidth: 180 }}
+                            onChange={e => setFilterStatus(e.target.value)}>
+                            <MenuItem value="ALL">All Status</MenuItem>
+                            <MenuItem value="ACTIVE">ACTIVE</MenuItem>
+                            <MenuItem value="OUT_OF_SERVICE">OUT OF SERVICE</MenuItem>
+                        </TextField>
+                        <Box sx={{ ml: 'auto' }}>
+                            <Typography variant="body2" color="textSecondary">
+                                Showing <strong>{filtered.length}</strong> of <strong>{resources.length}</strong> resources
+                            </Typography>
+                        </Box>
+                    </Box>
+                </Fade>
 
-                {/* Table */}
-                <TableContainer component={Paper} elevation={2}
-                                sx={{ borderRadius: 2 }}>
+                {/* Resources Table */}
+                <Fade in={true} timeout={1000}>
+                    <TableContainer component={Paper} elevation={2}
+                                    sx={{ borderRadius: 2, overflow: 'hidden' }}>
                     <Table>
                         <TableHead>
                             <TableRow sx={{ backgroundColor: '#1976d2' }}>
