@@ -156,13 +156,37 @@ function Resources() {
 
     const ResourceForm = () => (
         <>
-            {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-            <TextField fullWidth label="Resource Name *" margin="normal"
+            {error && (
+                <Alert severity="error" sx={{ mb: 2, borderRadius: 1 }}>
+                    {error}
+                </Alert>
+            )}
+            <TextField 
+                fullWidth 
+                label="Resource Name *" 
+                margin="normal"
+                variant="outlined"
+                sx={{ 
+                    '& .MuiOutlinedInput-root': {
+                        borderRadius: 1
+                    }
+                }}
                 value={form.name}
-                onChange={e => setForm({...form, name: e.target.value})} />
+                onChange={e => setForm({...form, name: e.target.value})} 
+            />
             <Grid container spacing={2}>
                 <Grid item xs={6}>
-                    <TextField fullWidth select label="Type *" margin="normal"
+                    <TextField 
+                        fullWidth 
+                        select 
+                        label="Type *" 
+                        margin="normal"
+                        variant="outlined"
+                        sx={{ 
+                            '& .MuiOutlinedInput-root': {
+                                borderRadius: 1
+                            }
+                        }}
                         value={form.type}
                         onChange={e => setForm({...form, type: e.target.value})}>
                         {types.map(t => (
@@ -171,46 +195,108 @@ function Resources() {
                     </TextField>
                 </Grid>
                 <Grid item xs={6}>
-                    <TextField fullWidth label="Capacity *"
-                        type="number" margin="normal"
+                    <TextField 
+                        fullWidth 
+                        label="Capacity *"
+                        type="number" 
+                        margin="normal"
+                        variant="outlined"
+                        sx={{ 
+                            '& .MuiOutlinedInput-root': {
+                                borderRadius: 1
+                            }
+                        }}
                         value={form.capacity}
-                        onChange={e => setForm({...form, capacity: e.target.value})} />
+                        onChange={e => setForm({...form, capacity: e.target.value})} 
+                    />
                 </Grid>
             </Grid>
-            <TextField fullWidth label="Location *" margin="normal"
+            <TextField 
+                fullWidth 
+                label="Location *" 
+                margin="normal"
+                variant="outlined"
+                sx={{ 
+                    '& .MuiOutlinedInput-root': {
+                        borderRadius: 1
+                    }
+                }}
                 value={form.location}
-                onChange={e => setForm({...form, location: e.target.value})} />
+                onChange={e => setForm({...form, location: e.target.value})} 
+            />
             <Grid container spacing={2}>
                 <Grid item xs={6}>
-                    <TextField fullWidth label="Available From"
-                        type="time" margin="normal"
+                    <TextField 
+                        fullWidth 
+                        label="Available From"
+                        type="time" 
+                        margin="normal"
+                        variant="outlined"
                         InputLabelProps={{ shrink: true }}
+                        sx={{ 
+                            '& .MuiOutlinedInput-root': {
+                                borderRadius: 1
+                            }
+                        }}
                         value={form.availableFrom?.substring(0, 5)}
                         onChange={e => setForm({
                             ...form,
                             availableFrom: e.target.value + ':00'
-                        })} />
+                        })} 
+                    />
                 </Grid>
                 <Grid item xs={6}>
-                    <TextField fullWidth label="Available To"
-                        type="time" margin="normal"
+                    <TextField 
+                        fullWidth 
+                        label="Available To"
+                        type="time" 
+                        margin="normal"
+                        variant="outlined"
                         InputLabelProps={{ shrink: true }}
+                        sx={{ 
+                            '& .MuiOutlinedInput-root': {
+                                borderRadius: 1
+                            }
+                        }}
                         value={form.availableTo?.substring(0, 5)}
                         onChange={e => setForm({
                             ...form,
                             availableTo: e.target.value + ':00'
-                        })} />
+                        })} 
+                    />
                 </Grid>
             </Grid>
-            <TextField fullWidth select label="Status" margin="normal"
+            <TextField 
+                fullWidth 
+                select 
+                label="Status" 
+                margin="normal"
+                variant="outlined"
+                sx={{ 
+                    '& .MuiOutlinedInput-root': {
+                        borderRadius: 1
+                    }
+                }}
                 value={form.status}
                 onChange={e => setForm({...form, status: e.target.value})}>
-                <MenuItem value="ACTIVE">ACTIVE</MenuItem>
-                <MenuItem value="OUT_OF_SERVICE">OUT OF SERVICE</MenuItem>
+                <MenuItem value="ACTIVE">✓ ACTIVE</MenuItem>
+                <MenuItem value="OUT_OF_SERVICE">⚠ OUT OF SERVICE</MenuItem>
             </TextField>
-            <TextField fullWidth label="Description" margin="normal"
-                multiline rows={2} value={form.description}
-                onChange={e => setForm({...form, description: e.target.value})} />
+            <TextField 
+                fullWidth 
+                label="Description" 
+                margin="normal"
+                variant="outlined"
+                multiline 
+                rows={3} 
+                sx={{ 
+                    '& .MuiOutlinedInput-root': {
+                        borderRadius: 1
+                    }
+                }}
+                value={form.description}
+                onChange={e => setForm({...form, description: e.target.value})} 
+            />
         </>
     );
 
@@ -485,22 +571,40 @@ function Resources() {
 
                 {/* Add Resource Dialog */}
                 <Dialog open={open} onClose={() => setOpen(false)}
-                        maxWidth="sm" fullWidth>
+                        maxWidth="sm" fullWidth
+                        PaperProps={{
+                            sx: {
+                                borderRadius: 2,
+                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)'
+                            }
+                        }}>
                     <DialogTitle sx={{
                         background: 'linear-gradient(135deg, #1976d2, #42a5f5)',
-                        color: 'white', fontWeight: 'bold'
+                        color: 'white', 
+                        fontWeight: 'bold',
+                        fontSize: '1.2rem'
                     }}>
-                        Add New Resource
+                        ➕ Add New Resource
                     </DialogTitle>
-                    <DialogContent sx={{ pt: 2 }}>
+                    <DialogContent sx={{ pt: 2.5 }}>
                         <ResourceForm />
                     </DialogContent>
-                    <DialogActions sx={{ p: 2 }}>
+                    <DialogActions sx={{ p: 2, gap: 1 }}>
                         <Button onClick={() => setOpen(false)}
-                                color="inherit">Cancel</Button>
+                                color="inherit"
+                                sx={{ borderRadius: 1 }}>
+                            Cancel
+                        </Button>
                         <Button variant="contained"
                                 onClick={handleCreate}
-                                sx={{ px: 3 }}>
+                                sx={{ 
+                                    px: 3,
+                                    borderRadius: 1,
+                                    background: 'linear-gradient(135deg, #1976d2, #42a5f5)',
+                                    '&:hover': {
+                                        background: 'linear-gradient(135deg, #1565c0, #1976d2)'
+                                    }
+                                }}>
                             Add Resource
                         </Button>
                     </DialogActions>
@@ -509,22 +613,40 @@ function Resources() {
                 {/* Edit Resource Dialog */}
                 <Dialog open={editOpen}
                         onClose={() => setEditOpen(false)}
-                        maxWidth="sm" fullWidth>
+                        maxWidth="sm" fullWidth
+                        PaperProps={{
+                            sx: {
+                                borderRadius: 2,
+                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)'
+                            }
+                        }}>
                     <DialogTitle sx={{
                         background: 'linear-gradient(135deg, #f57c00, #ffb74d)',
-                        color: 'white', fontWeight: 'bold'
+                        color: 'white', 
+                        fontWeight: 'bold',
+                        fontSize: '1.2rem'
                     }}>
-                        Edit Resource
+                        ✏️ Edit Resource
                     </DialogTitle>
-                    <DialogContent sx={{ pt: 2 }}>
+                    <DialogContent sx={{ pt: 2.5 }}>
                         <ResourceForm />
                     </DialogContent>
-                    <DialogActions sx={{ p: 2 }}>
+                    <DialogActions sx={{ p: 2, gap: 1 }}>
                         <Button onClick={() => setEditOpen(false)}
-                                color="inherit">Cancel</Button>
-                        <Button variant="contained" color="warning"
+                                color="inherit"
+                                sx={{ borderRadius: 1 }}>
+                            Cancel
+                        </Button>
+                        <Button variant="contained" 
                                 onClick={handleUpdate}
-                                sx={{ px: 3 }}>
+                                sx={{ 
+                                    px: 3,
+                                    borderRadius: 1,
+                                    background: 'linear-gradient(135deg, #f57c00, #ffb74d)',
+                                    '&:hover': {
+                                        background: 'linear-gradient(135deg, #e65100, #f57c00)'
+                                    }
+                                }}>
                             Update Resource
                         </Button>
                     </DialogActions>
@@ -533,23 +655,43 @@ function Resources() {
                 {/* Delete Confirm Dialog */}
                 <Dialog open={deleteOpen}
                         onClose={() => setDeleteOpen(false)}
-                        maxWidth="xs" fullWidth>
-                    <DialogTitle sx={{ color: '#d32f2f' }}>
-                        Delete Resource?
+                        maxWidth="xs" fullWidth
+                        PaperProps={{
+                            sx: {
+                                borderRadius: 2,
+                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)'
+                            }
+                        }}>
+                    <DialogTitle sx={{ 
+                        color: '#d32f2f',
+                        fontWeight: 'bold',
+                        fontSize: '1.1rem'
+                    }}>
+                        ⚠️ Delete Resource?
                     </DialogTitle>
-                    <DialogContent>
+                    <DialogContent sx={{ pt: 2 }}>
                         <Typography>
-                            Are you sure you want to delete
-                            <strong> {selectedResource?.name}</strong>?
+                            Are you sure you want to delete <strong>{selectedResource?.name}</strong>?
+                            <br/>
                             This action cannot be undone.
                         </Typography>
                     </DialogContent>
-                    <DialogActions sx={{ p: 2 }}>
+                    <DialogActions sx={{ p: 2, gap: 1 }}>
                         <Button onClick={() => setDeleteOpen(false)}
-                                color="inherit">Cancel</Button>
+                                color="inherit"
+                                sx={{ borderRadius: 1 }}>
+                            Cancel
+                        </Button>
                         <Button variant="contained" color="error"
                                 onClick={handleDelete}
-                                sx={{ px: 3 }}>
+                                sx={{ 
+                                    px: 3,
+                                    borderRadius: 1,
+                                    background: 'linear-gradient(135deg, #d32f2f, #f44336)',
+                                    '&:hover': {
+                                        background: 'linear-gradient(135deg, #b71c1c, #d32f2f)'
+                                    }
+                                }}>
                             Delete
                         </Button>
                     </DialogActions>
