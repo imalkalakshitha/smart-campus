@@ -329,7 +329,7 @@ function Resources() {
                                 </Typography>
                             </Box>
                         </Box>
-                        <Button variant="contained
+                        <Button variant="contained"
                             startIcon={<AddIcon />}
                             onClick={() => {
                                 setOpen(true);
